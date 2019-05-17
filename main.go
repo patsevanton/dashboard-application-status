@@ -11,7 +11,8 @@ import (
 
 func main() {
   log.SetFlags(log.Lshortfile)
-  appVersion := []uint8{}
+  // appVersion := []uint8{}
+  appVersionChan := make(chan []uint8) 
 
   go func() {
     for {
@@ -21,15 +22,17 @@ func main() {
           log.Fatal(err)
       }
       fmt.Printf("%s", appVersion)
+      appVersionChan <- appVersion
       time.Sleep(5 * time.Second)
     }
-  }
+  }()
 
   http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
    tmpl, err := template.ParseFiles("index.html")
    if err != nil {
      http.Error(w, err.Error(), http.StatusInternalServerError)
    }
+   appVersion := <-appVersionChan
 
    data := struct {
      AppVersion string
