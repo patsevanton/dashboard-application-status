@@ -11,7 +11,6 @@ import (
 
 func main() {
   log.SetFlags(log.Lshortfile)
-  // appVersion := []uint8{}
   appVersionChan := make(chan []uint8) 
 
   go func() {
